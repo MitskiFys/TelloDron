@@ -25,8 +25,8 @@ void Gamepad::ProcessEvents()
 				ProcessAxisEvent(event.number, normXYZValue(event.value));
 				fireStateChanged(m_gamepadState);
 			}
-
 		}
+		fireStateChanged(m_gamepadState);
 		usleep(2E4);
 	}
 }
@@ -43,6 +43,11 @@ void Gamepad::ProcessButtonEvent(uint8_t number, const bool value)
 	case DS4_BUTTONS::CROSS:
 	{
 		m_gamepadState.buttonState.Cross = value;
+		break;
+	}
+	case DS4_BUTTONS::CIRCLE:
+	{
+		m_gamepadState.buttonState.Circle = value;
 		break;
 	}
 	case DS4_BUTTONS::L1:

@@ -29,11 +29,13 @@ endif()
 set(SOURCE_FILES
 GamepadControl.cpp
 DronControl.cpp
+DetectPose.cpp
 )
 
 set(HEADER_FILES
 GamepadControl.h
 DronControl.h
+DetectPose.h
 )
 
 include_directories(
