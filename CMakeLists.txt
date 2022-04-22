@@ -3,6 +3,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(TelloPoseControl)
 find_package(Threads REQUIRED)
+find_package( OpenCV REQUIRED )
 # setup CUDA
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/utils/cuda" )
 find_package(CUDA)
@@ -30,17 +31,22 @@ set(SOURCE_FILES
 GamepadControl.cpp
 DronControl.cpp
 DetectPose.cpp
+include/sort-cpp/Hungarian.cpp
+include/sort-cpp/KalmanTracker.cpp
 )
 
 set(HEADER_FILES
 GamepadControl.h
 DronControl.h
 DetectPose.h
+include/sort-cpp/Hungarian.h
+include/sort-cpp/KalmanTracker.h
 )
 
 include_directories(
 	${CMAKE_SOURCE_DIR}/include/jetson-utils
 	${CMAKE_SOURCE_DIR}/include/jetson-inference
+	${OpenCV_INCLUDE_DIRS}
 	${CUDA_INCLUDE_DIRS}
 )
 
@@ -57,5 +63,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 	libctello.so
 	Threads::Threads
 	${CUDA_LIBRARIES}
+	${OpenCV_LIBS}
 	libjetson-utils.so
 	libjetson-inference.so)
