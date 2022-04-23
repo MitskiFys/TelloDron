@@ -17,6 +17,7 @@ void Gamepad::ProcessEvents()
 			event.type &= ~JS_EVENT_INIT;
 			if (event.type == JS_EVENT_BUTTON)
 			{
+				std::cout << "button" <<std::endl;
 				ProcessButtonEvent(event.number, event.value);
 				fireStateChanged(m_gamepadState);
 			}

@@ -10,7 +10,8 @@ namespace
 
 DronControl::DronControl():
 	m_droneState(DroneState::LandOff),
-	m_drone()
+	m_drone(),
+	m_gamepad()
 {
 	m_drone.Bind();
 	m_gamepad.fireStateChanged.connect([this](const GamepadState& state)

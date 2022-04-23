@@ -29,6 +29,14 @@ namespace {
 bool signal_recieved = false;
 bool isTrackingActive = false;
 
+struct PoseState
+{
+	bool isLeftArmUp = false;
+	bool isRightArmUp = false;
+	bool isLeftElbowUp = false;
+	bool isRightElbowUp = false;
+}poseState;
+
 void sig_handler(int signo)
 {
 	if( signo == SIGINT )	{
@@ -183,7 +191,7 @@ int main()
 
 
 	videoOptions inp;
-	inp.resource = "/dev/video0";
+	inp.resource = "/dev/video1";
 	inp.codec = videoOptions::Codec::CODEC_UNKNOWN;
 	inp.width = 960;
 	inp.height = 720;
@@ -261,9 +269,49 @@ int main()
 
 					drawTrackingStrategy(net, pose, image, input);
 					//std::cout << getAngleBtwThreePoints(net, pose, LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST) << std::endl;
-					std::cout << isArmUp(getAngleBtwThreePoints(net, pose, NECK, LEFT_SHOULDER, LEFT_ELBOW),getAngleBtwThreePoints(net, pose, LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST)) << std::endl;
-					std::cout << isArmUp(getAngleBtwThreePoints(net, pose, NECK, RIGHT_SHOULDER, RIGHT_ELBOW) * -1,getAngleBtwThreePoints(net, pose, RIGHT_SHOULDER, RIGHT_ELBOW, RIGHT_WRIST)) << std::endl;
 					setTrackCorrection(net, input, pose, dron);
+					poseState.isLeftArmUp = isArmUp(getAngleBtwThreePoints(net, pose, NECK, LEFT_SHOULDER, LEFT_ELBOW),getAngleBtwThreePoints(net, pose, LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST));
+					poseState.isRightArmUp = isArmUp(getAngleBtwThreePoints(net, pose, NECK, RIGHT_SHOULDER, RIGHT_ELBOW) * -1,getAngleBtwThreePoints(net, pose, RIGHT_SHOULDER, RIGHT_ELBOW, RIGHT_WRIST));
+					poseState.isLeftElbowUp = isElbowUp(getAngleBtwThreePoints(net, pose, NECK, LEFT_SHOULDER, LEFT_ELBOW),getAngleBtwThreePoints(net, pose, LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST));
+					poseState.isRightElbowUp = isElbowUp(getAngleBtwThreePoints(net, pose, NECK, RIGHT_SHOULDER, RIGHT_ELBOW),getAngleBtwThreePoints(net, pose, RIGHT_SHOULDER, RIGHT_ELBOW, RIGHT_WRIST) * -1);
+
+					auto delta = 37;
+					if (poseState.isLeftArmUp)
+					{
+						std::string arm = "Left arm up";
+
+						font->OverlayText(image, input->GetWidth(), input->GetHeight(),
+										  arm.c_str(), 5, 80 + delta, make_float4(255, 255, 255, 255), make_float4(0, 0, 0, 100));
+						delta += 37;
+					}
+					if (poseState.isRightArmUp)
+					{
+						std::string arm = "Right arm up";
+
+						font->OverlayText(image, input->GetWidth(), input->GetHeight(),
+										  arm.c_str(), 5, 80 + delta, make_float4(255, 255, 255, 255), make_float4(0, 0, 0, 100));
+						delta += 37;
+					}
+					if (poseState.isLeftElbowUp)
+					{
+						std::string arm = "Left elbow up";
+
+						font->OverlayText(image, input->GetWidth(), input->GetHeight(),
+										  arm.c_str(), 5, 80 + delta, make_float4(255, 255, 255, 255), make_float4(0, 0, 0, 100));
+						delta += 37;
+					}
+					if (poseState.isRightElbowUp)
+					{
+						std::string arm = "Right elbow up";
+
+						font->OverlayText(image, input->GetWidth(), input->GetHeight(),
+										  arm.c_str(), 5, 80 + delta, make_float4(255, 255, 255, 255), make_float4(0, 0, 0, 100));
+						delta += 37;
+					}
+
+
+					//std::cout << poseState.isLeftArmUp << poseState.isRightArmUp << poseState.isLeftElbowUp << poseState.isRightElbowUp << std::endl;
+
 					//const auto distanceToCentre = sqrt(pow((neckPoint.x - input->GetWidth() / 2), 2) + pow((neckPoint.y - input->GetHeight() / 2), 2));
 					//getAngleBtwThreePoints(net, pose, LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST);
 					//getAngleBtwThreePoints(net, pose, NECK, LEFT_SHOULDER, LEFT_ELBOW);
